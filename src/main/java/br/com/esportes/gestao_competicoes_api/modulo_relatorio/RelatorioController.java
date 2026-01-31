@@ -26,7 +26,7 @@ public class RelatorioController {
 
     @GetMapping("/inscritos/modalidade/{idModalidade}")
     @Operation(summary = "Relatório de Equipes Inscritas", description = "Lista todas as equipes confirmadas em uma modalidade.")
-    public ResponseEntity<List<InscricaoModel>> getRelatorioInscritos(@PathVariable Long idModalidade) {
+    public ResponseEntity<List<RelatorioInscritoDTO>> getRelatorioInscritos(@PathVariable Long idModalidade) {
         return ResponseEntity.ok(relatorioService.gerarRelatorioInscritos(idModalidade));
     }
 
@@ -49,6 +49,10 @@ public class RelatorioController {
     }
 
     @GetMapping("/inscritos/modalidade/{idModalidade}/download")
+    @Operation(
+            summary = "Download Relatório de Inscritos",
+            description = "Gera e baixa uma planilha Excel (.xlsx) com a lista de todas as equipes confirmadas na modalidade."
+    )
     public ResponseEntity<byte[]> baixarExcelInscritos(@PathVariable Long idModalidade) {
         try {
             byte[] arquivoExcel = relatorioService.gerarExcelInscritos(idModalidade);

@@ -56,12 +56,12 @@ public class EquipeModel {
     private String documentacaoTipo;
 
     @OneToMany(mappedBy = "equipe", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("equipe")
+    @JsonIgnore
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private List<InscricaoModel> historicoParticipacoes = new ArrayList<>();
 
     @OneToMany(mappedBy = "equipe", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("equipe")
+    @JsonIgnore
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private List<AtletaModel> atletas = new ArrayList<>();
 }

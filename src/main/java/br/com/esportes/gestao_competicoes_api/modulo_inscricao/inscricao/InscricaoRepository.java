@@ -1,5 +1,6 @@
 package br.com.esportes.gestao_competicoes_api.modulo_inscricao.inscricao;
 
+import br.com.esportes.gestao_competicoes_api.modulo_relatorio.RelatorioInscritoDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,8 +12,19 @@ import java.util.List;
 public interface InscricaoRepository extends JpaRepository<InscricaoModel,Long> {
   List<InscricaoModel> findByModalidadeId(Long modalidadeId);
 
-    // MÉTODO OTIMIZADO PARA RELATÓRIOS
-    // O "JOIN FETCH" obriga o banco a trazer os dados da Equipe junto com a Inscrição
-  //  @Query("SELECT i FROM InscricaoModel i JOIN FETCH i.equipe WHERE i.modalidade.id = :idModalidade")
- //   List<InscricaoModel> findByModalidadeIdComEquipe(@Param("idModalidade") Long idModalidade);
+  @Query("""
+        SELECT new br.com.esportes.gestao_competicoes_api.modulo_relatorio.RelatorioInscritoDTO(
+            i.id,
+            e.nome,
+            e.nomeResponsavel,
+            i.dataInscricao,
+            i.status,
+            g.nome
+        )
+        FROM InscricaoModel i
+        JOIN i.equipe e
+        LEFT JOIN i.grupo g
+        WHERE i.modalidade.id = :idModalidade
+    """)
+  List<RelatorioInscritoDTO> buscarInscritosParaRelatorio(@Param("idModalidade") Long idModalidade);
 }

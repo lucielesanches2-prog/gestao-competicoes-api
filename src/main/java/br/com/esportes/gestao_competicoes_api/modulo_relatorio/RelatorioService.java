@@ -34,8 +34,8 @@ public class RelatorioService {
         this.recursoRepository = recursoRepository;
     }
 
-    public List<InscricaoModel> gerarRelatorioInscritos(Long idModalidade) {
-        return inscricaoRepository.findByModalidadeId(idModalidade);
+    public List<RelatorioInscritoDTO> gerarRelatorioInscritos(Long idModalidade) {
+        return inscricaoRepository.buscarInscritosParaRelatorio(idModalidade);
     }
 
     public List<AtletaModel> gerarRelatorioAtletas(Long idEquipe) {
@@ -55,65 +55,44 @@ public class RelatorioService {
     }
 
     public byte[] gerarExcelInscritos(Long idModalidade) throws IOException {
-        // 1. Buscar os dados do banco
-        List<InscricaoModel> inscricoes = inscricaoRepository.findByModalidadeId(idModalidade);
 
-        // 2. Criar o arquivo Excel em memória
+        // Busca o DTO enxuto
+        List<RelatorioInscritoDTO> dados = inscricaoRepository.buscarInscritosParaRelatorio(idModalidade);
+
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-
             Sheet sheet = workbook.createSheet("Equipes Inscritas");
 
-            // --- ESTILO DO CABEÇALHO (Negrito) ---
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            CellStyle headerCellStyle = workbook.createCellStyle();
-            headerCellStyle.setFont(headerFont);
+            // --- Cabeçalho Atualizado (Sem Email/Telefone) ---
+            String[] colunas = {"ID", "Equipe", "Responsável", "Data", "Status", "Grupo"};
 
-            // --- CRIAR LINHA DE CABEÇALHO ---
             Row headerRow = sheet.createRow(0);
-            String[] colunas = {"ID Inscrição", "Equipe", "Responsável", "Email", "Telefone", "Data", "Status"};
+            Font font = workbook.createFont();
+            font.setBold(true);
+            CellStyle style = workbook.createCellStyle();
+            style.setFont(font);
 
             for (int i = 0; i < colunas.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(colunas[i]);
-                cell.setCellStyle(headerCellStyle);
+                cell.setCellStyle(style);
             }
 
-            // --- PREENCHER OS DADOS (LINHA POR LINHA) ---
+            // --- Dados ---
             int rowIdx = 1;
-            for (InscricaoModel inscricao : inscricoes) {
+            for (RelatorioInscritoDTO item : dados) {
                 Row row = sheet.createRow(rowIdx++);
 
-                // Célula 0: ID
-                row.createCell(0).setCellValue(inscricao.getId());
-
-                // Célula 1: Nome da Equipe
-                row.createCell(1).setCellValue(inscricao.getEquipe().getNome());
-
-                // Célula 2: Responsável
-                row.createCell(2).setCellValue(inscricao.getEquipe().getNomeResponsavel());
-
-                // Célula 3: Email (Acesso Direto agora)
-                String email = inscricao.getEquipe().getEmail();
-                row.createCell(3).setCellValue(email != null ? email : "N/A");
-
-                // Célula 4: Telefone (Acesso Direto agora)
-                String tel = inscricao.getEquipe().getTelefone();
-                row.createCell(4).setCellValue(tel != null ? tel : "N/A");
-
-                // Célula 5: Data
-                row.createCell(5).setCellValue(inscricao.getDataInscricao().toString());
-
-                // Célula 6: Status
-                row.createCell(6).setCellValue(inscricao.getStatus());
+                row.createCell(0).setCellValue(item.idInscricao());
+                row.createCell(1).setCellValue(item.nomeEquipe());
+                row.createCell(2).setCellValue(item.responsavel());
+                row.createCell(3).setCellValue(item.dataInscricao().toString());
+                row.createCell(4).setCellValue(item.status());
+                row.createCell(5).setCellValue(item.nomeGrupo() != null ? item.nomeGrupo() : "Aguardando Sorteio");
             }
 
-            // --- AJUSTE AUTOMÁTICO DAS COLUNAS ---
-            for (int i = 0; i < colunas.length; i++) {
-                sheet.autoSizeColumn(i);
-            }
+            // Ajustar largura das colunas
+            for(int i=0; i<colunas.length; i++) sheet.autoSizeColumn(i);
 
-            // 3. Escrever o workbook para um array de bytes
             workbook.write(out);
             return out.toByteArray();
         }

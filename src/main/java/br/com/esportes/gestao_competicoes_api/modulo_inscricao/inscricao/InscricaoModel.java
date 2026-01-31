@@ -3,6 +3,7 @@ package br.com.esportes.gestao_competicoes_api.modulo_inscricao.inscricao;
 import br.com.esportes.gestao_competicoes_api.modulo_campeonato.modalidade.ModalidadeModel;
 import br.com.esportes.gestao_competicoes_api.modulo_inscricao.equipe.EquipeModel;
 import br.com.esportes.gestao_competicoes_api.modulo_sorteio.GrupoModel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ public class InscricaoModel {
     private Long id;
 
    
-    @Column(name = "data_nscricao")
+    @Column(name = "data_inscricao")
     private LocalDate dataInscricao = LocalDate.now();
 
     private String status = "PENDENTE";
@@ -36,12 +37,12 @@ public class InscricaoModel {
 
     @ManyToOne
     @JoinColumn(name = "equipe_id", nullable = false)
-    @JsonIgnoreProperties({"historicoParticipacoes", "atletas", "documentacao"})
+    @JsonIgnoreProperties({"equipe","historicoParticipacoes", "atletas", "documentacao"})
     private EquipeModel equipe;
 
     @ManyToOne
     @JoinColumn(name = "modalidade_id", nullable = false)
-    @JsonIgnoreProperties("inscricoes")
+   @JsonIgnoreProperties("inscricoes")
     private ModalidadeModel modalidade;
 
     @ManyToOne

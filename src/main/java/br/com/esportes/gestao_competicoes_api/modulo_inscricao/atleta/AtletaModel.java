@@ -49,6 +49,6 @@ public class AtletaModel {
 
     @ManyToOne
     @JoinColumn(name = "equipe_id")
-    @JsonIgnoreProperties({"atletas", "historicoParticipacoes", "documentacao", "contato"})
+    @JsonIgnoreProperties({"equipe","atletas", "historicoParticipacoes", "documentacao", "contato"})
     private EquipeModel equipe;
 }
