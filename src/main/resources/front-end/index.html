@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Campeonatos - ASI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Criar Novo Campeonato</h2>
+        </div>
+        <div class="card-body">
+            <form id="campeonatoForm">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome do Campeonato</label>
+                    <input type="text" class="form-control" id="nome" placeholder="Ex: Campeonato Municipal 2026" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="dataInicio" class="form-label">Data de Início</label>
+                        <input type="date" class="form-control" id="dataInicio" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="dataFim" class="form-label">Data de Fim</label>
+                        <input type="date" class="form-control" id="dataFim" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Salvar Campeonato</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-5 card shadow">
+        <div class="card-header">
+            <h4>Campeonatos Registrados</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Início</th>
+                        <th>Fim</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaCampeonatos">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api-gestao-competicoes/campeonato';
+    const form = document.getElementById('campeonatoForm');
+    const tabela = document.getElementById('tabelaCampeonatos');
+
+    // 1. CREATE (POST)
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const dados = {
+            nome: document.getElementById('nome').value,
+            dataInicio: document.getElementById('dataInicio').value,
+            dataFim: document.getElementById('dataFim').value
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/criar-campeonato`, {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            });
+
+            if (response.ok) {
+                alert('Campeonato criado com sucesso!');
+                form.reset();
+                // Aqui você chamaria a função de listar novamente
+            } else {
+                alert('Erro ao criar campeonato.');
+            }
+        } catch (error) {
+            console.error('Erro na requisição:', error);
+            alert('Não foi possível conectar ao servidor local.');
+        }
+    });
+
+    // 2. READ (GET) - Exemplo de como implementar a listagem
+    async function listarCampeonatos() {
+        try {
+            // Ajuste o endpoint conforme sua API (ex: /listar ou /todos)
+            const response = await fetch(`${API_URL}/listar`); 
+            const campeonatos = await response.json();
+            
+            tabela.innerHTML = '';
+            campeonatos.forEach(camp => {
+                tabela.innerHTML += `
+                    <tr>
+                        <td>${camp.nome}</td>
+                        <td>${camp.dataInicio}</td>
+                        <td>${camp.dataFim}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="deletar('${camp.id}')">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (err) {
+            console.log("Aguardando API para listagem...");
+        }
+    }
+
+    // Inicializa a lista (se houver endpoint de GET)
+    // listarCampeonatos();
+</script>
+
+</body>
+</html>
