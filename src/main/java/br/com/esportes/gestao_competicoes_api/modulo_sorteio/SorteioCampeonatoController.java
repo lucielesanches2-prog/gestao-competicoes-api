@@ -1,6 +1,7 @@
 package br.com.esportes.gestao_competicoes_api.modulo_sorteio;
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,12 @@ public class SorteioCampeonatoController {
     }
 
     @PostMapping("/realizar-sorteio")
+    @Operation(
+            summary = "Realizar Sorteio de Grupos",
+            description = "Executa o algoritmo de sorteio para a modalidade informada. " +
+                    "O sistema cria a quantidade de grupos solicitada, distribui primeiramente os cabeças de chave (se houver) " +
+                    "e, em seguida, distribui aleatoriamente as demais equipes, gerando o log de auditoria."
+    )
     public ResponseEntity<List<GrupoModel>> realizarSorteio(
             @RequestParam Long modalidadeId,
             @RequestParam Integer numeroDeGrupos) {
