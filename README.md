@@ -534,3 +534,49 @@ Se você tiver problemas para configurar o Java ou Banco de Dados localmente, vo
 Independente se rodou via VS Code ou Docker, acesse a documentação Swagger para testar:
 
 📍 **Link:** [http://localhost:8080/api-gestao-competicoes/swagger-ui/index.html](http://localhost:8080/api-gestao-competicoes/swagger-ui/index.html)
+
+---
+
+# 🏆 Gestão de Competições - Banco de Dados
+
+Este repositório contém a configuração do banco de dados relacional para o sistema de gestão de competições, utilizando Docker para padronização do ambiente de desenvolvimento.
+
+## 🚀 Como Rodar
+
+Certifique-se de ter o **Docker** e o **Docker Compose** instalados. No terminal, execute:
+
+**Bash**
+
+```
+docker-compose up -d
+```
+
+## 📊 Informações do Container
+
+| **Atributo**       | **Valor**           |
+| ------------------------ | ------------------------- |
+| **Imagem**         | `postgres:17.0`         |
+| **Container Name** | `db-gestao-competicoes` |
+| **Porta Local**    | `5432`                  |
+| **Database**       | `gestao_competicoes_db` |
+| **Usuário**       | `admin_esportes`        |
+| **Senha**          | `senha_segura_123`      |
+
+## 🛠️ Conexão via DBeaver / Cliente SQL
+
+Para gerenciar os dados manualmente, siga as configurações abaixo em seu cliente SQL preferido:
+
+1. **Host:** `localhost`
+2. **Porta:** `5432`
+3. **Database:** `gestao_competicoes_db`
+4. **Username:** `admin_esportes`
+5. **Password:** `senha_segura_123`
+
+### Exemplo de Configuração:
+
+---
+
+## 💾 Persistência e Rede
+
+* **Volume:** Os dados são persistidos no volume nomeado `postgres_data` para evitar perda de informação ao reiniciar o container.
+* **Network:** O serviço está isolado na rede `rede_esportes_dev`.
