@@ -476,7 +476,7 @@ O Docker é essencial para rodar o banco de dados (PostgreSQL) ou a aplicação 
    `docker --version docker-compose --version`
 5. Atualizar o wsl
 
-   `wsl update`
+   `wsl --update`
 
 ---
 
@@ -533,4 +533,4 @@ Se você tiver problemas para configurar o Java ou Banco de Dados localmente, vo
 
 Independente se rodou via VS Code ou Docker, acesse a documentação Swagger para testar:
 
-📍 **Link:** [http://localhost:8080/swagger-ui.html](https://www.google.com/search?q=http://localhost:8080/swagger-ui.html&authuser=1)
+📍 **Link:** [http://localhost:8080/api-gestao-competicoes/swagger-ui/index.html](http://localhost:8080/api-gestao-competicoes/swagger-ui/index.html)
